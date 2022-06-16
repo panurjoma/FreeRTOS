@@ -45,6 +45,8 @@
 
 /* USER CODE BEGIN PV */
 
+#define DWT_CRTL (*(volatile uint32_t*)0xE0001000)  // this is the way to define a macro as a memory register in order to access it
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,6 +94,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+
+  /* Enable the CYCCNT counter */
+  DWT_CRTL |= ( 1 << 0); /* Bit 0 set to 1 */
+
+  /* Start event recording */
+  SEGGER_SYSVIEW_Conf();  /* configure the target of the sysview */
+  SEGGER_SYSVIEW_Start(); /* Start recording */
+
   status = xTaskCreate(task1_handler, "Task-1", 200, "Hello world from task-1", 2, &task1_handle);
 
   configASSERT(status == pdPASS);
@@ -215,7 +225,7 @@ static void task1_handler(void* parameters)
 	while(1)
 	{
 		printf("%s\n", (char*)parameters);
-		taskYIELD();
+//		taskYIELD();
 	}
 
 }
@@ -226,7 +236,7 @@ static void task2_handler(void* parameters)
 	while(1)
 	{
 		printf("%s\n", (char*)parameters);
-		taskYIELD();
+//		taskYIELD();
 	}
 
 }
