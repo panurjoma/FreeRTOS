@@ -46,6 +46,7 @@
 /* USER CODE BEGIN PV */
 
 #define DWT_CRTL (*(volatile uint32_t*)0xE0001000)  // this is the way to define a macro as a memory register in order to access it
+#define ITM_TCR  (*(volatile uint32_t*)0xE0000E80)  // To activate ITM control cell bit 2 (SYNCENA)
 
 /* USER CODE END PV */
 
@@ -96,17 +97,20 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Enable the CYCCNT counter */
-  DWT_CRTL |= ( 1 << 0); /* Bit 0 set to 1 */
+  DWT_CRTL |= ( 1 << 0 ); /* Bit 0 set to 1 */
+
+  /* Enable the ITM control cell bit 2 (SYNCENA) */
+  ITM_TCR  |= ( 1 << 2 );
 
   /* Start event recording */
   SEGGER_SYSVIEW_Conf();  /* configure the target of the sysview */
   SEGGER_SYSVIEW_Start(); /* Start recording */
 
-  status = xTaskCreate(task1_handler, "Task-1", 200, "Hello world from task-1", 2, &task1_handle);
+  status = xTaskCreate(task1_handler, "Task-1", 150, "Hello world from task-1", 2, &task1_handle);
 
   configASSERT(status == pdPASS);
 
-  status = xTaskCreate(task2_handler, "Task-2", 200, "Hello world from task-2", 2, &task2_handle);
+  status = xTaskCreate(task2_handler, "Task-2", 150, "Hello world from task-2", 2, &task2_handle);
 
   configASSERT(status == pdPASS);
 
@@ -222,10 +226,19 @@ static void MX_GPIO_Init(void)
 static void task1_handler(void* parameters)
 {
 
+	char msg[100];
+
 	while(1)
 	{
-		printf("%s\n", (char*)parameters);
-//		taskYIELD();
+		/* to use argument to this API function the string must be formatted before */
+		snprintf(msg, 100, (char*)parameters);
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+
+		/* Normal print using write function of the system by default */
+//		printf("%s\n", (char*)parameters);
+
+
+		taskYIELD();
 	}
 
 }
@@ -233,10 +246,19 @@ static void task1_handler(void* parameters)
 static void task2_handler(void* parameters)
 {
 
+	char msg[100];
+
 	while(1)
 	{
-		printf("%s\n", (char*)parameters);
-//		taskYIELD();
+		/* to use argument to this API function the string must be formatted before */
+		snprintf(msg, 100, (char*)parameters);
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+
+		/* Normal print using write function of the system by default */
+//		printf("%s\n", (char*)parameters);
+
+
+		taskYIELD();
 	}
 
 }
