@@ -3,6 +3,7 @@
 	<name>001Tasks</name>
 	<comment></comment>
 	<projects>
+		<project>001Tasks</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -28,5 +29,6 @@
 		<nature>com.st.stm32cube.ide.mcu.MCURootProjectNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
 </projectDescription>
